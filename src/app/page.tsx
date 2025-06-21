@@ -6,19 +6,37 @@ import { RightPanel } from "./presentation/components/RightPanel";
 import { FolderContent, RootData } from "./domain/RootData";
 
 export default function Home() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [currentFolderContent, setCurrentFolderContent] =
+  const [selectedFolderIndex, setSelectedFolderIndex] = useState<number>(0);
+  const [firstVisibleFolderIndex, setFirstVisibleFolderIndex] =
+    useState<number>(0);
+  const [selectedFolderContent, setSelectedFolderContent] =
     useState<FolderContent | null>(null);
   const [folders, setFolders] = useState<string[]>(["DEFAULT", "VALUES"]);
   const [data, setData] = useState<RootData | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowUp") {
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
-      } else if (event.key === "ArrowDown") {
-        setCurrentIndex((prev) => Math.min(prev + 1, folders.length - 1));
-      }
+      const maxVisible = 4;
+      setSelectedFolderIndex((prev) => {
+        let newIndex = prev;
+
+        if (event.key === "ArrowUp") {
+          newIndex = Math.max(prev - 1, 0);
+        } else if (event.key === "ArrowDown") {
+          newIndex = Math.min(prev + 1, folders.length - 1);
+        }
+
+        setFirstVisibleFolderIndex((currentStart) => {
+          if (newIndex < currentStart) {
+            return newIndex;
+          } else if (newIndex >= currentStart + maxVisible) {
+            return newIndex - maxVisible + 1;
+          }
+          return currentStart;
+        });
+
+        return newIndex;
+      });
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -43,23 +61,30 @@ export default function Home() {
 
   useEffect(() => {
     if (data?.folders) {
-      setCurrentFolderContent(data.folders[currentIndex].content);
+      setSelectedFolderContent(data.folders[selectedFolderIndex].content);
     }
-  }, [data, currentIndex]);
+  }, [data, selectedFolderIndex]);
 
   return (
-    <div className="h-screen bg-gray-900 container">
-      <div className="w-[94%] h-[5%] mb-[5%] bg-green-400 text-gray-950">
-        <span>PERSONAL TERMINAL</span>
+    <div className="h-screen bg-gray-900">
+      <div className="w-[94%] h-[5%] ml-[3%] pl-[1%] bg-green-400 text-gray-950">
+        PERSONAL TERMINAL
       </div>
-      <div className="w-[94%] h-[80%] flex gap-4">
-        <LeftPanel currentIndex={currentIndex} folders={folders} />
+      <div className="w-[94%] h-[85%] flex gap-4">
+        <LeftPanel
+          selectedFolderIndex={selectedFolderIndex}
+          firstVisibleFolderIndex={firstVisibleFolderIndex}
+          folders={folders}
+          maxAmmountVisibleFolders={4}
+        />
         <RightPanel
-          title={currentFolderContent?.title}
-          content={currentFolderContent?.text}
+          title={selectedFolderContent?.title}
+          content={selectedFolderContent?.text}
         />
       </div>
-      <div className="h-[10%]"></div>
+      <div className="h-[10%] pl-[2%] text-green-400 ">
+        UP, DOWN: select folder
+      </div>
     </div>
   );
 }

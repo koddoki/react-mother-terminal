@@ -7,15 +7,13 @@ interface RightPanelProps {
 
 export const RightPanel: React.FC<RightPanelProps> = ({ title, content }) => {
   return (
-    <div className="h-full w-[70%]">
-      <div className="h-20%">
-        <div className="bg-green-700 h-[8%] mt-[4%] border-2 border-solid border-white text-white">
-          {title ?? "Default"}
-        </div>
-        <div className="bg-gray-900 h-[8%] border-2 border-solid border-green-400 text-white"></div>
+    <div className=" h-full w-[70%]">
+      <div className="h-[10%] pl-[2%] border-2 border-solid border-white bg-green-700 text-white">
+        {title ?? "Default"}
       </div>
 
-      <div className="bg-gray-900 h-full border-2 border-solid border-green-400 text-white">
+      <div className="h-[5%] bg-green-400"></div>
+      <div className="h-[75%] pl-[2%] border-2 border-solid border-green-400 bg-gray-900 text-white">
         {content ?? "Default"}
       </div>
     </div>
