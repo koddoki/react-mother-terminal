@@ -24,7 +24,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
   return (
     <div className="w-[30%] h-full">
-      <div className="relative h-[15%]">
+      <div className="relative h-[18%]">
         <div className="absolute bottom-0 left-0 text-green-400 pl-[15%]">
           FOLDERS
         </div>
